@@ -1,0 +1,12 @@
+﻿using Data.Repository.Dapper.Base;
+using System;
+
+namespace <s>@Model.Namespace</s> {
+	public class <s>@Model.Name.Value</s>_ReadAll_Function : BasePageableFunction {	
+		public <s>@Model.Name.Value</s>_ReadAll_Function() {
+			this.DatabaseSchema = "@Model.Schema";
+			this.UserDefinedFunctionName = "<s>@Model.Name.Value</s>_ReadAll";
+			this.Signature = "@@readActive, @@readInactive";
+		}
+	}
+}

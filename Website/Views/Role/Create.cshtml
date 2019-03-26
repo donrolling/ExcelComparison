@@ -1,0 +1,56 @@
+﻿@model Models.DTO.RoleDTO
+
+@{
+	Layout = "~/Views/Shared/_MembershipLayout.cshtml";
+	ViewData["Title"] = "Create Role";
+}
+
+@section Scripts{
+	<script src="~/ClientApp/Pages/RoleCreateUpdate.js"></script>
+	<script>
+		var allPermissions = @Json.Serialize(Model.AllPermissions);
+		var permissions = @Json.Serialize(Model.SelectedPermissions);
+		var roleCreateUpdate = new RoleCreateUpdate(allPermissions, permissions);
+	</script>
+}
+
+<h2>Create Role</h2>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Create">
+			@Html.AntiForgeryToken()
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Name" class="control-label"></label>
+				<input asp-for="Name" class="form-control" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<div class="checkbox">
+					<label>
+						<input asp-for="IsActive" type="checkbox" checked /> @Html.DisplayNameFor(model => model.IsActive)
+					</label>
+				</div>
+			</div>
+			<div class="form-group attributeref-two-listboxes">
+				<select asp-items="Model.AvailablePermissions" id="availablepermissions" class="form-control chooser" multiple size="12"></select>
+				<div class="buttons">
+					<button type="button" class="btn btn-primary" onclick="roleCreateUpdate.removeAllPermissions()"><span><i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i></span></button>
+					<button type="button" class="btn btn-primary" onclick="roleCreateUpdate.removePermissions()"><span><i class="fas fa-chevron-left"></i></span></button>
+					<button type="button" class="btn btn-primary" onclick="roleCreateUpdate.addPermissions()"><span><i class="fas fa-chevron-right"></i></span></button>
+					<button type="button" class="btn btn-primary" onclick="roleCreateUpdate.addAllPermissions()"><span><i class="fas fa-chevron-right"></i><i class="fas fa-chevron-right"></i></span></button>
+				</div>
+				<select asp-items="Model.SelectedPermissions" id="selectedpermissions" class="form-control chooser" multiple size="12"></select>
+				<select asp-for="PermissionIds" asp-items="Model.AllPermissions" class="form-control" hidden="hidden" multiple style="visibility:hidden"></select>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>

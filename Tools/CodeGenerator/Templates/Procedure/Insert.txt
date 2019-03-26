@@ -1,0 +1,24 @@
+﻿CREATE PROCEDURE [@Model.Schema].[<s>@Model.Name.Value</s>_Insert] (
+	@Model.SQLInsertSignature
+) AS
+	INSERT INTO [@Model.Schema].[@Model.Name.Value]	(
+	@if(Model.Properties.Count(a => a.PrimaryKey) == 1){
+		<s>[@Model.Properties.Where(a => !a.PrimaryKey).Select(a => a.Name.Value).Aggregate((current, next) => current + "], [" + next)]</s>
+	}else{
+		<s>[@Model.Properties.Select(a => a.Name.Value).Aggregate((current, next) => current + "], [" + next)]</s>
+	}
+	)
+	VALUES (
+	@if(Model.Properties.Count(a => a.PrimaryKey) == 1){
+		<s><s>@@</s>@Model.Properties.Where(a => !a.PrimaryKey).Select(a => a.Name.LowerCamelCase).Aggregate((current, next) => current + ", @" + next)</s>
+	}else{
+		<s><s>@@</s>@Model.Properties.Select(a => a.Name.LowerCamelCase).Aggregate((current, next) => current + ", @" + next)</s>
+	}
+	)
+	@if(Model.Properties.Count(a => a.PrimaryKey) == 1){
+		foreach(var p in Model.Properties.Where(a => a.PrimaryKey)){
+			if(p.DataType.ToLower() == "int" || p.DataType.ToLower() == "bigint"){
+	<s>set <s>@@</s><s>@p.Name.LowerCamelCase</s> = Scope_Identity()</s>
+			}
+		}
+	}

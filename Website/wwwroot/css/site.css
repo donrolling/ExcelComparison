@@ -1,0 +1,214 @@
+﻿body {
+	font-size: .875rem;
+}
+
+.hidden {
+	display: none;
+}
+
+.feather {
+	width: 16px;
+	height: 16px;
+	vertical-align: text-bottom;
+}
+
+.navbar a {
+	color: white !important;
+	cursor: pointer !important;
+}
+
+/*
+ * Sidebar
+ */
+.sidebar {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 100; /* Behind the navbar */
+	padding: 48px 0 0 15px; /* Height of navbar */
+	box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar-sticky {
+	position: relative;
+	top: 0;
+	height: calc(100vh - 48px);
+	padding-top: .5rem;
+	overflow-x: hidden;
+	overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+	.sidebar-sticky {
+		position: -webkit-sticky;
+		position: sticky;
+	}
+}
+
+.sidebar .nav-item {
+	padding: 2px 0 3px 0;
+}
+
+	.sidebar .nav-item a {
+		font-weight: 500;
+		color: #333;
+	}
+
+		.sidebar .nav-item a.feather {
+			margin-right: 4px;
+			color: #999;
+		}
+
+		.sidebar .nav-item a.active {
+			color: #007bff;
+		}
+
+			.sidebar .nav-item a:hover .feather,
+			.sidebar .nav-item a.active .feather {
+				color: inherit;
+			}
+
+.sidebar-heading {
+	font-size: .75rem;
+	text-transform: uppercase;
+}
+
+/*
+ * Content
+ */
+
+[role="main"] {
+	padding-top: 153px; /* Space for fixed navbar */
+}
+
+@media (min-width: 768px) {
+	[role="main"] {
+		padding-top: 58px; /* Space for fixed navbar */
+	}
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+	padding-top: .75rem;
+	padding-bottom: .75rem;
+	font-size: 1rem;
+	background-color: rgba(0, 0, 0, .25);
+	box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .form-control {
+	padding: .75rem 1rem;
+	border-width: 0;
+	border-radius: 0;
+}
+
+.form-control-dark {
+	color: #fff;
+	background-color: rgba(255, 255, 255, .1);
+	border-color: rgba(255, 255, 255, .1);
+}
+
+	.form-control-dark:focus {
+		border-color: transparent;
+		box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+	}
+
+
+.customButton {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.attributeref-two-listboxes {
+	min-width: 960px;
+	overflow: hidden;
+	font-size: 0;
+}
+
+.chooser {
+	float: left;
+	width: 300px;
+	height: 100px;
+	font-size: 14px;
+}
+
+.buttons {
+	float: left;
+}
+
+	.buttons button {
+		width: 70px;
+		display: block;
+		margin: 13px 16px;
+		font-size: 16px;
+		vertical-align: central;
+	}
+
+.jsGrid_CustomHeader {
+	padding-top: 5px;
+	padding-bottom: 10px;
+}
+
+	.jsGrid_CustomHeader input[type="radio"] {
+		margin-right: 5px;
+		position: relative;
+		top: 2px;
+	}
+
+	.jsGrid_CustomHeader label {
+		margin-right: 12px;
+		font-weight: normal;
+		font-size: small;
+	}
+
+	.jsGrid_CustomHeader:after {
+		content: '';
+		display: block;
+		clear: both;
+	}
+
+	.jsGrid_CustomHeader .btn {
+		float: right;
+	}
+
+.jsGrid {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.datepicker {
+	width: 100px !important;
+	display: inline !important;
+}
+
+.timepicker {
+	width: 110px !important;
+	display: inline !important;
+}
+
+.whitetext {
+	color: white;
+}
+
+
+.nav .nav-item .navItemInner {
+	display: table;
+}
+
+.nav .navIcon {
+	display: table-cell;
+	color: black;
+	text-align: center;
+	width: 28px;
+}
+
+.nav .navText {
+	display: table-cell;
+	color: black;
+	padding-left: 5px;
+	width: 250px;
+}

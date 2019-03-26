@@ -1,0 +1,71 @@
+﻿using Dapper;
+using Data.Dapper.Models;
+using Data.Interfaces;
+using Data.Repository.FunctionDefinitions;
+using Data.Repository.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Models.Application;
+using Models.Entities;
+using Models.Interfaces;
+using System.Data;
+using System.Threading.Tasks;
+
+namespace <s>@Model.Namespace</s> {
+	@if(Model.Keys.Count == 2) {
+	<s>public class <s>@Model.Name.Value</s>DapperBaseRepository : DapperAsyncRepository, IAssociativeDapperRepository<<s>@Model.Name.Value</s>, <s>@Model.Keys[0].DataType</s>, <s>@Model.Keys[1].DataType</s>> {</s>
+	} else if(Model.Keys.Count == 3) {
+	<s>public class <s>@Model.Name.Value</s>DapperBaseRepository : DapperAsyncRepository, IAssociativeTo3DapperRepository<<s>@Model.Name.Value</s>, <s>@Model.Keys[0].DataType</s>, <s>@Model.Keys[1].DataType</s>, <s>@Model.Keys[2].DataType</s>> {</s>
+	} else {
+	<s>public class <s>@Model.Name.Value</s>DapperBaseRepository : DapperAsyncRepository, IEntityDapperRepository<<s>@Model.Name.Value</s>, <s>@Model.Keys.First().DataType</s>> {</s>
+	}
+		public <s>@Model.Name.Value</s>DapperBaseRepository(IOptions<AppSettings> appSettings, ILoggerFactory loggerFactory) : base(appSettings, loggerFactory){ }
+
+		public <s>@Model.Name.Value</s>DapperBaseRepository(string connectionString, IOptions<AppSettings> appSettings, ILoggerFactory loggerFactory) : base(connectionString, appSettings, loggerFactory){ }
+
+	@if(Model.Keys.Count > 1) {
+		<s>public virtual async Task<TransactionResponse> Create(<s>@Model.Name.Value</s> <s>@Model.Name.LowerCamelCase</s>) {</s>
+			<s>var sql = "Execute [<s>@Model.Schema</s>].[<s>@Model.Name.Value</s>_Insert] <s>@Model.CSharpInsertCallSignature</s>";</s>
+			<s>var result = await base.ExecuteAsync(sql, <s>@Model.Name.LowerCamelCase</s>);</s>
+			<s>return result;</s>
+		<s>}</s>
+	}else{
+		<s>public virtual async Task<InsertResponse<s><@Model.Keys[0].DataType></s>> Create(<s>@Model.Name.Value</s> <s>@Model.Name.LowerCamelCase</s>) {</s>
+			<s>var sql = "Execute [<s>@Model.Schema</s>].[<s>@Model.Name.Value</s>_Insert] <s>@Model.CSharpInsertCallSignature</s>";</s>
+			<s>var _params = new DynamicParameters();</s>
+			foreach(var p in Model.Properties.Where(a => !a.PrimaryKey)){
+			<s>_params.Add("@p.Name.Value", @Model.Name.LowerCamelCase<s>.</s>@p.Name.Value);</s>
+			}
+			foreach(var key in Model.Keys){
+	<s>_params.Add("@key.Name.Value", dbType: DbType.<s>@key.DbType</s>, direction: ParameterDirection.Output);</s>
+			}
+			<s>var result = await base.ExecuteAsync(sql, _params);</s>
+			<s>return InsertResponse<s><@Model.Keys[0].DataType></s>.GetInsertResponse(result);</s>
+		<s>}</s>
+	}
+
+		public virtual async Task<TransactionResponse> Update(<s>@Model.Name.Value</s> <s>@Model.Name.LowerCamelCase</s>) {
+			var sql = "Execute [<s>@Model.Schema</s>].[<s>@Model.Name.Value</s>_Update] @Model.CSharpUpdateCallSignature</s>";
+			var result = await base.ExecuteAsync(sql, <s>@Model.Name.LowerCamelCase</s>);
+			return result;
+		}
+
+		public virtual async Task<TransactionResponse> Delete(<s>@Model.CSharpKeySignature</s>) {
+			var sql = "Execute [<s>@Model.Schema</s>].[<s>@Model.Name.Value</s>_Delete] <s>@Model.CSharpKeyCallSignature</s>";
+			var result = await base.ExecuteAsync(sql, new { 
+				@foreach(var key in Model.Keys){
+				<s>@key.Name.LowerCamelCase<s> = </s>@key.Name.LowerCamelCase<s>,</s></s>
+				}
+			});
+			return result;
+		}
+
+		public virtual async Task<<s>@Model.Name.Value</s>> SelectById(<s>@Model.CSharpKeySignature</s>) {
+			return await this.QuerySingleAsync<<s>@Model.Name.Value</s>>(new <s>@Model.Name.Value</s>_SelectById_Function(<s>@Model.CSharpKeyList</s>));
+		}
+
+		public virtual async Task<IDataResult<<s>@Model.Name.Value</s>>> ReadAll(PageInfo pageInfo) {
+			return await this.QueryAsync<<s>@Model.Name.Value</s>>(new <s>@Model.Name.Value</s>_ReadAll_Function(), pageInfo);
+		}
+	}
+}

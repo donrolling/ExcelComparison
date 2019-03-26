@@ -1,0 +1,7 @@
+﻿CREATE PROCEDURE [@Model.Schema].[<s>@Model.Name.Value</s>_Update]
+	@Model.SQLUpdateSignature
+AS
+	UPDATE [@Model.Schema].[<s>@Model.Name.Value</s>]
+	SET	
+		@Model.SQLSet
+	WHERE @Model.SQLPKWhere

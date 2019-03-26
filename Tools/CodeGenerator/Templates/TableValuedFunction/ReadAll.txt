@@ -1,0 +1,11 @@
+﻿CREATE Function [@Model.Schema].[<s>@Model.Name.Value</s>_ReadAll] (@@readActive bit, @@readInactive bit)
+RETURNS TABLE
+AS
+return 
+	select 
+		<s>[@Model.Properties.Select(a => a.Name.Value).Aggregate((current, next) => current + "], [" + next)]</s> 
+	from [<s>@Model.Name.Value</s>]
+	where 
+		([IsActive] = 1 and @@readActive = 1)
+		or
+		([IsActive] = 0 and @@readInactive = 1)

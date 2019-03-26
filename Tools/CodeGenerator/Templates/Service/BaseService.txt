@@ -1,0 +1,75 @@
+﻿using Business.Interfaces;
+using Business.Services.EntityServices.Base;
+using Common.Transactions;
+using Data.Dapper.Models;
+using Data.Repository.Interfaces;
+using Microsoft.Extensions.Logging;
+using Models.Base;
+using Models.Entities;
+using Models.Interfaces;
+using System.Threading.Tasks;
+
+namespace @Model.Namespace {
+	<s>public class @Model.Name.Value</s><s>BaseService : EntityServiceBase {</s>
+		public IMembershipService MembershipService { get; set; }
+		public I<s>@Model.Name.Value</s>Repository <s>@Model.Name.Value</s>Repository { get; set; }
+
+		private static readonly Auditing _auditing = new Auditing();
+
+		public <s>@Model.Name.Value</s>BaseService(IMembershipService membershipService, I<s>@Model.Name.Value</s>Repository <s>@Model.Name.LowerCamelCase</s>Repository, ILoggerFactory loggerFactory) : base(_auditing, loggerFactory){
+			this.MembershipService = membershipService;
+			this.<s>@Model.Name.Value</s>Repository = <s>@Model.Name.LowerCamelCase</s>Repository;
+		}
+
+		@if(Model.Keys.Count > 1) {
+		<s>public virtual async Task<TransactionResponse> Create(<s>@Model.Name.Value</s> <s>@Model.Name.LowerCamelCase</s>){</s>
+		}else{
+		<s>public virtual async Task<InsertResponse<@Model.Keys[0].DataType>> Create(<s>@Model.Name.Value</s> <s>@Model.Name.LowerCamelCase</s>){</s>
+		}
+			var prepareForSaveResult = await base.PrepareForSave_Async<<s>@Model.Name.Value</s>, <s>@Model.CSharpKeyTypeList</s>>(<s>@Model.Name.LowerCamelCase</s>, await this.MembershipService.CurrentUserId());
+			if (!prepareForSaveResult.IsValid) {
+				return InsertResponse<s><@Model.Keys[0].DataType></s>.GetInsertResponse(TransactionResponse.GetTransactionResponse(ActionType.Create, Status.Failure, StatusDetail.Invalid, prepareForSaveResult.ValidationMessage));
+			}
+			var result = await this.<s>@Model.Name.Value</s>Repository.Create(<s>@Model.Name.LowerCamelCase</s>);
+			@if(Model.Keys.Count == 1){
+			<s>@Model.Name.LowerCamelCase</s><s>.Id = result.Id;</s>
+			}
+			return result;
+		}
+
+		public virtual async Task<TransactionResponse> Delete(<s>@Model.CSharpKeySignature</s>){
+			var result = await this.<s>@Model.Name.Value</s>Repository.Delete(<s>@Model.CSharpKeyList</s>);
+			return result;
+		}
+
+		public virtual async Task<IDataResult<<s>@Model.Name.Value</s>>> ReadAll(PageInfo pageInfo) {
+			return await this.<s>@Model.Name.Value</s>Repository.ReadAll(pageInfo);
+		}
+		
+		public virtual async Task<IDataResult<<s>@Model.Name.Value</s>>> ReadAll(ClientPageInfo clientPageInfo) {
+			var pageInfo = ClientPageInfo.ConvertToPageInfo(clientPageInfo);
+			return await this.ReadAll(pageInfo);
+		}
+		
+		public virtual async Task<TransactionResponse> Save(<s>@Model.Name.Value</s> <s>@Model.Name.LowerCamelCase</s>) {
+			if (<s>@Model.Name.LowerCamelCase</s>.Id == 0) {
+				return await this.Create(<s>@Model.Name.LowerCamelCase</s>);
+			} else {
+				return await this.Update(<s>@Model.Name.LowerCamelCase</s>);
+			}
+		}
+
+		public virtual async Task<<s>@Model.Name.Value</s>> SelectById(<s>@Model.CSharpKeySignature</s>) {
+			return await this.<s>@Model.Name.Value</s>Repository.SelectById(<s>@Model.CSharpKeyList</s>);
+		}
+
+		public virtual async Task<TransactionResponse> Update(<s>@Model.Name.Value</s> <s>@Model.Name.LowerCamelCase</s>){
+			var prepareForSaveResult = await base.PrepareForSave_Async<<s>@Model.Name.Value</s>, <s>@Model.CSharpKeyTypeList</s>>(<s>@Model.Name.LowerCamelCase</s>, await this.MembershipService.CurrentUserId());
+			if (!prepareForSaveResult.IsValid) {
+				return TransactionResponse.GetTransactionResponse(ActionType.Update, Status.Failure, StatusDetail.Invalid, prepareForSaveResult.ValidationMessage);
+			}
+			var result = await this.<s>@Model.Name.Value</s>Repository.Update(<s>@Model.Name.LowerCamelCase</s>);
+			return result;
+		}
+	}
+}

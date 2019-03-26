@@ -1,0 +1,211 @@
+﻿using Data.Repository.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
+
+namespace @Model.Namespace {
+	public class DapperRepository : IRepository {
+		private static string _connectionString;
+		public static string ConnectionString {
+			get {
+				if (_connectionString == null) {
+					throw new Exception("Repository must be initialized with a connection string.");
+				}
+				return _connectionString;
+			}
+		}
+
+		public DapperRepository(string connectionString) {
+			_connectionString = connectionString;
+		}
+
+		public T Get<T>(long id, string schema = null) where T : class {
+			T entity;
+			using (var connection = new SqlConnection(ConnectionString)) {
+				connection.Open();
+				entity = connection.Get<T>(id, schema: schema);
+			}
+			return entity;
+		}
+
+		public TransactionResponse Execute(string sql, dynamic param) {
+			var status = Status.Success;
+			var errorMessage = string.Empty;
+			try {
+				using (var connection = new SqlConnection(ConnectionString)) {
+					connection.Open();
+					using (var transaction = connection.BeginTransaction()) {
+						var result = SqlMapper.Execute(connection, sql, param, transaction);
+						transaction.Commit();
+					}
+				}
+			} catch (Exception ex) {
+				status = Status.Failure;
+				errorMessage = logError(ActionType.Execute, ex);
+			}
+
+			return TransactionResponse.GetTransactionResponse(ActionType.Execute, status, StatusDetail.Unknown, 0, errorMessage, sql, param);
+		}
+
+		protected IEnumerable<T> Query<T>(string sql, dynamic param) where T : class {
+			using (var connection = new SqlConnection(ConnectionString)) {
+				connection.Open();
+				try {	        
+					var result = SqlMapper.Query<T>(connection, sql, param);
+					return result;
+				} catch (Exception ex) {
+					logError(ActionType.Get, ex, sql);
+					return null;
+				}
+			}
+		}
+		protected IEnumerable<R> Query<T, U, R>(string sql, Func<T, U, R> func, dynamic param, string splitOn = null)
+			where T : class
+			where U : class
+			where R : class {
+			using (var connection = new SqlConnection(ConnectionString)) {
+				connection.Open();
+				return SqlMapper.Query<T, U, R>(connection, sql, func, param, splitOn: splitOn);
+			}
+		}
+		protected IEnumerable<R> Query<T, U, V, R>(string sql, Func<T, U, V, R> func, dynamic param, string splitOn = null)
+			where T : class
+			where U : class
+			where R : class
+			where V : class {
+			using (var connection = new SqlConnection(ConnectionString)) {
+				connection.Open();
+				return SqlMapper.Query<T, U, V, R>(connection, sql, func, param, splitOn: splitOn);
+			}
+		}
+		protected IEnumerable<R> Query<T, U, V, W, R>(string sql, Func<T, U, V, W, R> func, dynamic param, string splitOn = null)
+			where T : class
+			where U : class
+			where V : class
+			where W : class
+			where R : class {
+			using (var connection = new SqlConnection(ConnectionString)) {
+				connection.Open();
+				return SqlMapper.Query<T, U, V, W, R>(connection, sql, func, param, splitOn: splitOn);
+			}
+		}
+
+		protected string formatError(Exception ex) {
+			var msg = ex.Message.ToString();
+			if (ex.InnerException != null) {
+				msg += string.Concat("\nInner Exception: ", ex.InnerException.Message.ToString());
+			}
+			return msg;
+		}
+
+		public static int GetQueryTotal(string baseQuery, DynamicParameters dynamicData) {
+			var countQuery = GetCountQuery(baseQuery);
+			int total = 0;
+			using (var connection = new SqlConnection(ConnectionString)) {
+				connection.Open();
+				total = SqlMapper.Query<int>(connection, countQuery, dynamicData).First();
+			}
+			return total;
+		}
+		
+		public static string WrapQueryInRowNumberQuery(string baseQuery, string orderBy) {
+			if (string.IsNullOrEmpty(orderBy)) {
+				orderBy = "Id";
+			}
+			var frontAndBack = GetQueryFrontAndBack(baseQuery);
+			//this assumes that the last FROM in your query is the one with the joins and stuff.
+			//it helps if you have subselects, but could get hosed in certain circumstances
+			var realQuery = string.Concat(
+								"WITH result AS(",
+								frontAndBack.Item1,
+								", ROW_NUMBER() OVER (ORDER BY ",
+								orderBy,
+								") AS RowNumber ",
+								frontAndBack.Item2,
+								") SELECT * FROM result WHERE RowNumber BETWEEN @@rowStart and @@rowEnd"
+							);
+			return realQuery;
+		}
+
+		public static string GetCountQuery(string query) {
+			var back = GetQueryFrontAndBack(query).Item2;
+			if (back.Contains("order by")) {
+				var pos = back.IndexOf("order by");
+				back = back.Substring(0, pos);
+			}
+			var countQuery = string.Concat("select count(*) as Total ", back);
+			return countQuery;
+		}
+
+		public static Tuple<string, string> GetQueryFrontAndBack(string baseQuery) {
+			var lastFrom = baseQuery.LastIndexOf("from", StringComparison.CurrentCultureIgnoreCase);
+			var frontPart = baseQuery.Substring(0, lastFrom);
+			var backPart = baseQuery.Substring(lastFrom, baseQuery.Length - lastFrom);
+			return Tuple.Create<string, string>(frontPart, backPart);
+		}
+
+		public static string PrepareForLikeQuery(string searchText, bool searchLeftSide, bool searchRightSide) {
+			if (string.IsNullOrEmpty(searchText)) {
+				return searchText;
+			}
+
+			var value = searchText.Replace("%", "[%]").Replace("[", "[[]").Replace("]", "[]]");
+
+			if (searchLeftSide) {
+				value = "%" + value;
+			}
+			if (searchRightSide) {
+				value += "%";
+			}
+
+			return value;
+		}
+
+		protected void setAuditFields<T>(T entity, bool isNew) where T : class {
+			if (isNew) {
+				var creationDate = entity.GetType().GetProperty("CreationDate", BindingFlags.Public | BindingFlags.Instance);
+				if (creationDate != null && creationDate.CanWrite) {
+					creationDate.SetValue(entity, DateTime.Now, null);
+				}
+			} else {
+				var updatedDate = entity.GetType().GetProperty("UpdatedDate", BindingFlags.Public | BindingFlags.Instance);
+				if (updatedDate != null && updatedDate.CanWrite) {
+					updatedDate.SetValue(entity, DateTime.Now, null);
+				}
+			}
+		}
+
+		private int getId<T>(T entity) where T : class {
+			try {
+				var value = (int)typeof(T).GetProperty("Id").GetValue(entity, null);
+				return value;
+			} catch (Exception) {
+				return 0;
+			}
+		}		
+
+		protected string logError(ActionType actionType, Exception ex, string additionalInformation = "") {
+			var errorType = actionType.ToString();
+			var message = string.Concat("Respository Error. \nCommand '[", errorType, "]' for unknown type", ": \n\t", ex.Message, string.IsNullOrEmpty(additionalInformation) ? "" : string.Concat("\n\t\tAdditional Information: ", additionalInformation));
+			var log = LogManager.GetLogger("Respository");
+			log.Error(message);
+			return message;
+		}
+
+		protected string logError<T>(ActionType actionType, Exception ex, string additionalInformation = "") where T : class {
+			var type = typeof(T);
+			var errorType = actionType.ToString();
+			var message = string.Concat("Respository Error. \nCommand '[", errorType, "]' for type ", type.Name, ": \n\t", ex.Message, string.IsNullOrEmpty(additionalInformation) ? "" : string.Concat("\n\t\tAdditional Information: ", additionalInformation));
+			var log = LogManager.GetLogger(type);
+			log.Error(message);
+			return message;
+		}
+		
+		protected DynamicParameters GetDynamicData_ForPaging(int pageStart, int pageSize) {			
+			var dynamicData = new DynamicParameters();
+			dynamicData.Add("rowStart", pageStart + 1);
+			var rowEnd = pageSize > 0 ? pageStart + pageSize : 100;//if 0 is passed in, then default to 100. IDK if this is a good idea, but it should work for now.
+			dynamicData.Add("rowEnd", rowEnd);
+			return dynamicData;
+		}
+	}
+}

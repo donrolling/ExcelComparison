@@ -1,0 +1,29 @@
+﻿using Dapper;
+using Data.Dapper.Interfaces;
+using Data.Repository.Dapper.Base;
+using System;
+
+namespace <s>@Model.Namespace</s> {
+	public class <s>@Model.Name.Value</s>_SelectById_Function : BaseFunction, ISelectByIdFunction {
+		@foreach(var key in Model.Keys){
+		<s>public <s>@key.DataType</s> <s>@key.Name.Value</s> { get; protected set; }</s>
+		}
+		public override string Signature { get; protected set; } = "@Model.CSharpKeyCallSignature";
+
+		public <s>@Model.Name.Value</s>_SelectById_Function(@Model.CSharpKeySignature) {
+			@foreach(var key in Model.Keys){
+			<s>this.<s>@key.Name.Value</s> <s>=</s> @key.Name.LowerCamelCase</s><s>;</s>
+			}
+			this.DatabaseSchema = "@Model.Schema";
+			this.UserDefinedFunctionName = "<s>@Model.Name.Value</s>_SelectById";
+		}
+
+		public override DynamicParameters DynamicParameters() {
+			var parameters = new DynamicParameters();
+			@foreach(var key in Model.Keys){
+			<s>parameters.Add("<s>@key.Name.Value</s>", this.<s>@key.Name.Value</s><s>);</s></s>
+			}
+			return parameters;
+		}
+	}	
+}

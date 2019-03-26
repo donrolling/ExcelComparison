@@ -1,0 +1,4 @@
+﻿@foreach(var p in Model.Properties){
+<s>services.AddTransient<I<s>@p.Name.Value</s>Repository, <s>@p.Name.Value</s>DapperRepository>();</s>
+<s>services.AddTransient<I<s>@p.Name.Value</s>Service, <s>@p.Name.Value</s>Service>();</s>
+}

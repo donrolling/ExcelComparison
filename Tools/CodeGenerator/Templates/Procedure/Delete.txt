@@ -1,0 +1,5 @@
+﻿CREATE PROCEDURE [@Model.Schema].[<s>@Model.Name.Value</s>_Delete]
+	@Model.SQLPKSignature
+AS
+	DELETE FROM [@Model.Schema].[@Model.Name.Value]
+	WHERE @Model.SQLPKWhere

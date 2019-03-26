@@ -1,0 +1,28 @@
+﻿@{
+	Layout = "~/Views/Shared/_MembershipLayout.cshtml";
+	ViewData["Title"] = "Users";
+}
+@section Scripts{
+	<script src="~/ClientApp/Models/ClientPageInfo.js"></script>
+	<script src="~/ClientApp/Models/ClientSearchFilter.js"></script>
+	<script src="~/ClientApp/Models/ActiveState.js"></script>
+	<script src="~/ClientApp/Pages/UserIndex.js"></script>
+	<script>
+		var userIndex = new UserIndex();
+	</script>
+}
+
+<h2>Users</h2>
+<hr />
+@Html.AntiForgeryToken()
+<div class="row">
+	<div class="col-md-12">
+		<div class="jsGrid_CustomHeader">
+			<input id="active" name="active" type="radio" onclick="userIndex.changeActiveState('active')" checked="checked" /><label>Active</label>
+			<input id="inactive" name="inactive" type="radio" onclick="userIndex.changeActiveState('inactive')" /><label>Inactive</label>
+			<input id="both" name="both" type="radio" onclick="userIndex.changeActiveState('both')" /><label>Both</label>
+			<a asp-action="Create" id="create" name="create" class="btn btn-primary">Create New</a>
+		</div>
+		<div id="jsGrid"></div>
+	</div>
+</div>

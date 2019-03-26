@@ -1,0 +1,11 @@
+﻿using Models.Application;
+using Data.Repository.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
+
+namespace <s>@Model.Namespace</s> {
+	public class <s>@Model.Name.Value</s>DapperRepository : <s>@Model.Name.Value</s>DapperBaseRepository, I<s>@Model.Name.Value</s>Repository {	
+		public <s>@Model.Name.Value</s>DapperRepository(IOptions<AppSettings> appSettings, ILoggerFactory loggerFactory) : base(appSettings, loggerFactory) { }
+	}
+}

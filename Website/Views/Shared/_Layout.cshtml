@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Website</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" type="text/css" rel="stylesheet" />
+    <link href="~/css/site.css" type="text/css" rel="stylesheet" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" type="text/css" rel="stylesheet" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a asp-controller="Home" asp-action="Index" class="navbar-brand">Home</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+				</ul>
+			</div>
+		</div>
+	</nav>
+	
+	<div class="container body-content">
+		@RenderBody()
+		<hr />
+		<footer>
+			<p>&copy; 2019 - Website</p>
+			<p id="version" class="hidden">Version <span id="versionNumber">1.0.0.0</span></p>
+		</footer>
+	</div>
+	<script src="/lib/jquery/dist/jquery.min.js"></script>
+	<script src="/lib/jquery-validation/dist/jquery.validate.js"></script>
+	<script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+	<script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+	<script src="~/ClientApp/Shared/ControlHelper.js"></script>
+	<script src="~/ClientApp//Shared/ClientPageInfoHelper.js"></script>
+
+	@RenderSection("Scripts", required: false)
+</body>
+</html>

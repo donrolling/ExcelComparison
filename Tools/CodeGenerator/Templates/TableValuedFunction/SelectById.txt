@@ -1,0 +1,6 @@
+﻿CREATE Function [@Model.Schema].[<s>@Model.Name.Value</s>_SelectById] (<s>@Model.SQLPKSignature</s>) RETURNS TABLE AS
+	return 
+		select top 1 
+			<s>[@Model.Properties.Select(a => a.Name.Value).Aggregate((current, next) => current + "], [" + next)]</s>	
+		from [<s>@Model.Name.Value</s>] 
+		where @Model.SQLPKWhere</s>
