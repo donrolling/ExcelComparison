@@ -1,5 +1,4 @@
 ﻿using Business.Interfaces;
-using Business.Service.EntityServices.Interfaces;
 using Common.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,7 +13,6 @@ namespace Tests.Models {
 		public IOptions<AppSettings> AppSettings { get; }
 		public ILogger Logger { get; }
 		public ILoggerFactory LoggerFactory { get; }
-		public IMembershipService MembershipService { get; private set; }
 		public IServiceProvider ServiceProvider { get; }
 		public TestContext TestContext { get; set; }
 		public string TestName {
@@ -28,7 +26,6 @@ namespace Tests.Models {
 			this.LoggerFactory = this.ServiceProvider.GetService<ILoggerFactory>();
 			Logger = LogUtility.GetLogger(this.ServiceProvider, this.GetType());
 			this.AppSettings = this.ServiceProvider.GetService<IOptions<AppSettings>>();
-			this.MembershipService = this.ServiceProvider.GetService<IMembershipService>();
 		}
 	}
 }

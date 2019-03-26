@@ -23,7 +23,6 @@
 		<ProjectReference Include="..\Business\Business.csproj" />
 		<ProjectReference Include="..\Common.Web\Common.Web.csproj" />
 		<ProjectReference Include="..\Common\Common.csproj" />
-		<ProjectReference Include="..\Data\Data.csproj" />
 		<ProjectReference Include="..\Models\Models.csproj" />
 	</ItemGroup>
 
@@ -47,6 +46,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Tests\Entity\" />
+	  <Folder Include="Tests\" />
 	</ItemGroup>
 </Project>
