@@ -39,9 +39,14 @@ namespace Business.Common
 
 		public static FileStream OpenRead<T>(string filename, string subDirectory) where T : class
 		{
-			var basePath = GetBasePath<T>();
-			var path = ProperPathCombine.Combine(new List<string> { basePath, subDirectory, filename });
-			return File.OpenRead(path);
+			if (subDirectory.Contains(":")) {
+				var path = ProperPathCombine.Combine(new List<string> { subDirectory, filename });
+				return File.OpenRead(path);
+			} else {
+				var basePath = GetBasePath<T>();
+				var path = ProperPathCombine.Combine(new List<string> { basePath, subDirectory, filename });
+				return File.OpenRead(path);
+			}
 		}
 
 		/// <summary>

@@ -152,6 +152,13 @@ namespace Business.Services.Excel
 				};
 			}
 		}
+		
+		public ExcelResult ReadFile(string path)
+		{
+			var filename = Path.GetFileName(path);
+			var directory = Path.GetDirectoryName(path);
+			return ReadFile(filename, directory);
+		}
 
 		public void Save(string filename, string directory, byte[] data)
 		{

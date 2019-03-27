@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="356.568" Width="557.839">
+	<Grid Margin="0,10,2,0">
+		<Button Content="Select File" HorizontalAlignment="Left" Margin="445,134,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="1.636,0.229" Click="btnGetFile1"/>
+		<TextBox Name="txtFileName1" HorizontalAlignment="Left" Height="23" Margin="22,131,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="406" FontSize="10" FontStyle="Italic" />
+		<Button Content="Select File" HorizontalAlignment="Left" Margin="445,190,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="1.636,0.229" Click="btnGetFile2" />
+		<TextBox Name="txtFileName2" HorizontalAlignment="Left" Height="23" Margin="22,187,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="406" FontSize="10" FontStyle="Italic"/>
+		<Button Content="Compare" HorizontalAlignment="Left" Margin="445,265,0,0" VerticalAlignment="Top" Width="75" Click="btnCompare"/>
+
+	</Grid>
 </Window>

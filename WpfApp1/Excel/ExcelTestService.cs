@@ -1,6 +1,7 @@
 ﻿using Business.Models;
 using Business.Services.Excel;
 using Common.Models;
+using Common.Transactions;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,24 @@ namespace Tests.Services
 			this.OutputDirectory = outputDirectory;
 		}
 
-		public void Compare(List<ExcelTest_CoordinateInfo> info, ExcelResult expected, ExcelResult actual, string testName, string testOutputDirectory, string errorFileName)
+		public MethodResult Compare(string expectedPath, string actualPath, string testName, string testOutputDirectory, string errorFileName)
+		{
+			var expected = ExcelService.ReadFile(expectedPath);
+			var actual = ExcelService.ReadFile(actualPath);
+			var end = expected.ExcelPackage.Workbook.Worksheets[1].Dimension.End;
+			var info = new List<ExcelTest_CoordinateInfo> {
+				//main data
+				new ExcelTest_CoordinateInfo {
+					Columns = end.Column,
+					Rows = end.Row,
+					ColumnOffset = this.ExcelService.ColumnNumber_FromColumnLetter("A"),
+					RowOffset = 1
+				}
+			};
+			return Compare(info, expected, actual, testName, testOutputDirectory, errorFileName);
+		}
+
+		public MethodResult Compare(List<ExcelTest_CoordinateInfo> info, ExcelResult expected, ExcelResult actual, string testName, string testOutputDirectory, string errorFileName)
 		{
 			var expectedWS = expected.ExcelPackage.Workbook.Worksheets[1];
 			var actualWS = actual.ExcelPackage.Workbook.Worksheets[1];
@@ -33,7 +51,7 @@ namespace Tests.Services
 				mainDataComparisonResults.AddRange(xs);
 			}
 			var isOk = mainDataComparisonResults.All(a => a.ExpectedAndActual_AreEqual);
-			if (isOk) { return; }
+			if (isOk) { return MethodResult.Ok(Status.Success, "Files are the same."); }
 			var message = new StringBuilder();
 			var errorCount = mainDataComparisonResults.Where(a => !a.ExpectedAndActual_AreEqual).Count();
 			var fullCount = mainDataComparisonResults.Count();
@@ -45,6 +63,7 @@ namespace Tests.Services
 			}
 			var _message = message.ToString();
 			this.CreateOutputWorksheet(mainDataComparisonResults, actual, testName, testOutputDirectory, errorFileName, _message);
+			return MethodResult.Fail($"Files are not the same. Failure: { percentFailed }%.\r\nDetails here: { testOutputDirectory }/{ errorFileName }");
 		}
 
 		public List<ExcelComparison> Compare(ExcelTest_CoordinateInfo info, ExcelWorksheet expected, ExcelWorksheet actual)

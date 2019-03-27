@@ -7,7 +7,7 @@ namespace Business.Models {
 		/// <summary>
 		/// The starting column for comparison
 		/// </summary>
-		public int ColumnOffset { get; set; }
+		public int ColumnOffset { get; set; } = 1;
 		/// <summary>
 		/// The number of columns to compare
 		/// </summary>
@@ -15,7 +15,7 @@ namespace Business.Models {
 		/// <summary>
 		/// The starting row for comparison
 		/// </summary>
-		public int RowOffset { get; set; }
+		public int RowOffset { get; set; } = 1;
 		/// <summary>
 		/// The number of rows to compare
 		/// </summary>
