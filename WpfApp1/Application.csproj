@@ -74,6 +74,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\MethodResult.cs" />
+    <Compile Include="Transactions\ActionType.cs" />
+    <Compile Include="Transactions\Status.cs" />
+    <Compile Include="Transactions\StatusDetail.cs" />
+    <Compile Include="Transactions\TransactionMetaData.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -82,22 +87,23 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExcelByteResult.cs" />
-    <Compile Include="ExcelComparison.cs" />
-    <Compile Include="ExcelResult.cs" />
-    <Compile Include="ExcelService.cs" />
-    <Compile Include="ExcelTestService.cs" />
-    <Compile Include="ExcelTest_CoordinateInfo.cs" />
-    <Compile Include="FileUtility.cs" />
+    <Compile Include="Models\Envelope.cs" />
+    <Compile Include="Excel\ExcelByteResult.cs" />
+    <Compile Include="Excel\ExcelComparison.cs" />
+    <Compile Include="Excel\ExcelResult.cs" />
+    <Compile Include="Excel\ExcelService.cs" />
+    <Compile Include="Excel\ExcelTestService.cs" />
+    <Compile Include="Excel\ExcelTest_CoordinateInfo.cs" />
+    <Compile Include="Utility\FileUtility.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ObjectToExcelUtility.cs" />
-    <Compile Include="ObjectToExcel_PropertyListOptions.cs" />
-    <Compile Include="ProperPathCombine.cs" />
+    <Compile Include="Excel\ObjectToExcelUtility.cs" />
+    <Compile Include="Excel\ObjectToExcel_PropertyListOptions.cs" />
+    <Compile Include="Utility\ProperPathCombine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
